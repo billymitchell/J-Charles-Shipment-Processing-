@@ -1,0 +1,17 @@
+{
+  "name": "express-server",
+  "version": "1.0.0",
+  "description": "A simple Express server project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^4.17.1",
+    "node-fetch": "^3.3.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
