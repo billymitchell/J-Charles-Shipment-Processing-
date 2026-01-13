@@ -122,87 +122,157 @@ function buildOrderItems(attachment) {
     return [{ code, quantity }];
 }
 
+function resolveSourceId(attachment) {
+    if (!attachment || typeof attachment !== 'object') {
+        return null;
+    }
+
+    return attachment.brightstores_order_id
+        || attachment.jcharles_order_number
+        || attachment.customer_po
+        || null;
+}
+
+function resolveShippingMethod(attachment) {
+    if (!attachment || typeof attachment !== 'object') {
+        return { carrier_code: null, shipment_method: null };
+    }
+
+    const shippingMethodSource = attachment.brightstores_shipping_method
+        || attachment.ship_via_description
+        || null;
+    return parseShippingMethod(shippingMethodSource);
+}
+
+function mergeOrderItems(items) {
+    const merged = new Map();
+
+    items.forEach((item) => {
+        if (!item || typeof item !== 'object') {
+            return;
+        }
+
+        const code = item.code || null;
+        const quantity = Number(item.quantity || 0);
+        if (!code || !Number.isFinite(quantity) || quantity <= 0) {
+            return;
+        }
+
+        merged.set(code, (merged.get(code) || 0) + quantity);
+    });
+
+    return Array.from(merged, ([code, quantity]) => ({ code, quantity }));
+}
+
+function buildGroupedShipments(attachments) {
+    const grouped = new Map();
+
+    attachments.forEach((attachment) => {
+        if (!attachment || typeof attachment !== 'object') {
+            return;
+        }
+
+        const tracking_number = attachment.tracking_number || null;
+        if (!tracking_number) {
+            return;
+        }
+
+        const entry = grouped.get(tracking_number) || {
+            tracking_number,
+            source_id: resolveSourceId(attachment),
+            ...resolveShippingMethod(attachment),
+            order_items: []
+        };
+
+        if (!entry.source_id) {
+            entry.source_id = resolveSourceId(attachment);
+        }
+
+        if (!entry.carrier_code || !entry.shipment_method) {
+            const method = resolveShippingMethod(attachment);
+            entry.carrier_code = entry.carrier_code || method.carrier_code;
+            entry.shipment_method = entry.shipment_method || method.shipment_method;
+        }
+
+        entry.order_items.push(...buildOrderItems(attachment));
+        grouped.set(tracking_number, entry);
+    });
+
+    return Array.from(grouped.values()).map((entry) => ({
+        ...entry,
+        order_items: mergeOrderItems(entry.order_items)
+    }));
+}
+
 // Single route to process inbound shipment data and forward to OrderDesk.
 app.post('/', async (req, res, next) => {
     try {
         // Validate the request body.
         const data = req.body;
         if (!data || typeof data.mail_attachments !== 'object') {
-            throw createError("Invalid input: 'mail_attachments' must be an object.", 400);
+            throw createError("Invalid input: 'mail_attachments' must be an object or array.", 400);
         }
 
-        const attachment = data.mail_attachments;
+        const attachments = Array.isArray(data.mail_attachments)
+            ? data.mail_attachments
+            : [data.mail_attachments];
 
-        // Validate required fields in the attachment.
-        if (!attachment.tracking_number) {
+        const shipments = buildGroupedShipments(attachments);
+        if (!shipments.length) {
             throw createError("Invalid attachment: Missing 'tracking_number'.", 400);
         }
 
-        const shippingMethodSource = attachment.brightstores_shipping_method
-            || attachment.ship_via_description
-            || null;
-        const { carrier_code, shipment_method } = parseShippingMethod(shippingMethodSource);
-        const order_items = buildOrderItems(attachment);
+        const responses = [];
+        for (const shipment of shipments) {
+            // Log key payload fields without dumping raw customer data.
+            log('info', 'payload.prepared', {
+                request_id: req.request_id,
+                source_id: shipment.source_id,
+                tracking_number: shipment.tracking_number,
+                carrier_code: shipment.carrier_code,
+                shipment_method: shipment.shipment_method,
+                order_items_count: shipment.order_items.length
+            });
 
-        // Construct the payload to send to the external API.
-        const extractedData = {
-            source_id: attachment.brightstores_order_id
-                || attachment.jcharles_order_number
-                || attachment.customer_po
-                || null,
-            tracking_number: attachment.tracking_number,
-            carrier_code: carrier_code || null,
-            shipment_method: shipment_method || null,
-            order_items
-        };
+            const response = await fetch('https://orderdesk-single-order-ship-65ffd8ceba36.herokuapp.com/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(shipment)
+            });
 
-        // Log key payload fields without dumping raw customer data.
-        log('info', 'payload.prepared', {
-            request_id: req.request_id,
-            source_id: extractedData.source_id,
-            tracking_number: extractedData.tracking_number,
-            carrier_code: extractedData.carrier_code,
-            shipment_method: extractedData.shipment_method,
-            order_items_count: extractedData.order_items.length
-        });
+            if (!response.ok) {
+                const errorResponse = await response.text();
+                let formattedError = { raw: errorResponse };
+                try {
+                    formattedError = JSON.parse(errorResponse);
+                } catch (parseError) {
+                    formattedError = { raw: errorResponse };
+                }
 
-        // Send the payload to the external API.
-        const response = await fetch('https://orderdesk-single-order-ship-65ffd8ceba36.herokuapp.com/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(extractedData)
-        });
-
-        // Handle non-OK responses from the external API.
-        if (!response.ok) {
-            const errorResponse = await response.text();
-            let formattedError = { raw: errorResponse };
-            try {
-                formattedError = JSON.parse(errorResponse);
-            } catch (parseError) {
-                formattedError = { raw: errorResponse };
+                const errorDetails = {
+                    status: `${response.status} ${response.statusText}`,
+                    requestBody: shipment,
+                    serverResponse: formattedError
+                };
+                const apiError = createError("Failed to submit shipment", 400, errorDetails);
+                apiError.requestBody = shipment;
+                throw apiError;
             }
 
-            // Preserve upstream error context for debugging.
-            const errorDetails = {
-                status: `${response.status} ${response.statusText}`,
-                requestBody: extractedData,
-                serverResponse: formattedError
-            };
-            const apiError = createError("Failed to submit shipment", 400, errorDetails);
-            apiError.requestBody = extractedData;
-            throw apiError;
+            const responseData = await response.json();
+            responses.push({
+                tracking_number: shipment.tracking_number,
+                response: responseData
+            });
         }
 
-        // Parse and return the successful response from the external API.
-        const responseData = await response.json();
         log('info', 'payload.sent', {
             request_id: req.request_id,
-            orderdesk_status: response.status
+            shipment_count: responses.length
         });
-        res.json({ success: true, response: responseData, request_id: req.request_id });
+        res.json({ success: true, responses, request_id: req.request_id });
 
     } catch (error) {
         // Forward errors to the centralized error handler.

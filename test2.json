@@ -1,17 +1,43 @@
 {
-    "id": "b11edf77dabb47b8a891db70a4411919",
-    "received_at": "2026-01-05 17:46:07",
-    "processed_at": "2026-01-05 19:14:04",
-    "mail_attachments": {
-        "jcharles_order_number": "SO-78248",
-        "jcharles_delivery_number": "WH/OUT/146944",
-        "brightstores_order_id": "48371-100895",
-        "order_items_brightstores_line_item_id": "504065961",
-        "order_items_code": "C-121998-magback-5star",
-        "order_items_name": "[Forbes] Magnetic Pin (5 Star)",
-        "shipment_quantity": "100",
-        "ship_date": "12/23/25 20:12",
-        "brightstores_shipping_method": "UPS Ground",
-        "tracking_number": "1Z08835W0396218679"
-    }
+    "id": "4da2ed47c3690fbccdc78dff43c87458",
+    "received_at": "2026-01-13 17:19:53",
+    "processed_at": "2026-01-13 18:31:13",
+    "mail_attachments": [
+        {
+            "jcharles_order_number": "1",
+            "jcharles_delivery_number": "2",
+            "brightstores_order_id": "48371-100894",
+            "order_items_brightstores_line_item_id": "",
+            "order_items_code": "121998-magback-rec",
+            "order_items_name": "",
+            "shipment_quantity": "1",
+            "ship_date": "12/23/25 20:12",
+            "brightstores_shipping_method": "UPS Ground",
+            "tracking_number": "1"
+        },
+        {
+            "jcharles_order_number": "1",
+            "jcharles_delivery_number": "2",
+            "brightstores_order_id": "48371-100894",
+            "order_items_brightstores_line_item_id": "",
+            "order_items_code": "121998-magback-4star",
+            "order_items_name": "",
+            "shipment_quantity": "50",
+            "ship_date": "12/23/25 20:12",
+            "brightstores_shipping_method": "UPS Ground",
+            "tracking_number": "1"
+        },
+        {
+            "jcharles_order_number": "1",
+            "jcharles_delivery_number": "2",
+            "brightstores_order_id": "48371-100894",
+            "order_items_brightstores_line_item_id": "",
+            "order_items_code": "121998-magback-4star",
+            "order_items_name": "",
+            "shipment_quantity": "50",
+            "ship_date": "12/23/25 20:12",
+            "brightstores_shipping_method": "UPS Ground",
+            "tracking_number": "2"
+        }
+    ]
 }
