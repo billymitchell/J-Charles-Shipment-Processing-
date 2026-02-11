@@ -6,9 +6,9 @@
         {
             "jcharles_order_number": "1",
             "jcharles_delivery_number": "2",
-            "brightstores_order_id": "48371-100894",
+            "brightstores_order_id": "48371-100903",
             "order_items_brightstores_line_item_id": "",
-            "order_items_code": "121998-magback-rec",
+            "order_items_code": "INDR-5str-26",
             "order_items_name": "",
             "shipment_quantity": "1",
             "ship_date": "12/23/25 20:12",
@@ -18,11 +18,11 @@
         {
             "jcharles_order_number": "1",
             "jcharles_delivery_number": "2",
-            "brightstores_order_id": "48371-100894",
+            "brightstores_order_id": "48371-100903",
             "order_items_brightstores_line_item_id": "",
-            "order_items_code": "121998-magback-4star",
+            "order_items_code": "INDR-5str-26",
             "order_items_name": "",
-            "shipment_quantity": "50",
+            "shipment_quantity": "1",
             "ship_date": "12/23/25 20:12",
             "brightstores_shipping_method": "UPS Ground",
             "tracking_number": "1"
@@ -30,11 +30,11 @@
         {
             "jcharles_order_number": "1",
             "jcharles_delivery_number": "2",
-            "brightstores_order_id": "48371-100894",
+            "brightstores_order_id": "48371-100903",
             "order_items_brightstores_line_item_id": "",
-            "order_items_code": "121998-magback-4star",
+            "order_items_code": "INDR-5str-26",
             "order_items_name": "",
-            "shipment_quantity": "50",
+            "shipment_quantity": "1",
             "ship_date": "12/23/25 20:12",
             "brightstores_shipping_method": "UPS Ground",
             "tracking_number": "2"

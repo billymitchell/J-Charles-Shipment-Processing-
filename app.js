@@ -102,24 +102,37 @@ function buildOrderItems(attachment) {
                     return null;
                 }
 
-                const code = item.code || item.sku || null;
-                const quantity = Number(item.quantity || item.qty || 0);
-                if (!code || !Number.isFinite(quantity) || quantity <= 0) {
+                const id = Number(
+                    item.order_items_brightstores_line_item_id
+                    || item.order_items_id
+                    || item.id
+                    || item.brightstores_line_item_id
+                    || 0
+                );
+                const quantity = Number(item.quantity || item.qty || item.shipment_quantity || 0);
+                if (!Number.isFinite(id) || id <= 0 || !Number.isFinite(quantity) || quantity <= 0) {
                     return null;
                 }
 
-                return { code, quantity };
+                return { id, quantity };
             })
             .filter(Boolean);
     }
 
-    const code = attachment.order_items_code || attachment.sku || null;
+    const id = Number(
+        attachment.order_items_brightstores_line_item_id
+        || attachment.order_items_id
+        || attachment.brightstores_line_item_id
+        || attachment.order_item_id
+        || attachment.line_item_id
+        || 0
+    );
     const quantity = Number(attachment.shipment_quantity || attachment.quantity || 0);
-    if (!code || !Number.isFinite(quantity) || quantity <= 0) {
+    if (!Number.isFinite(id) || id <= 0 || !Number.isFinite(quantity) || quantity <= 0) {
         return [];
     }
 
-    return [{ code, quantity }];
+    return [{ id, quantity }];
 }
 
 function resolveSourceId(attachment) {
@@ -142,26 +155,6 @@ function resolveShippingMethod(attachment) {
         || attachment.ship_via_description
         || null;
     return parseShippingMethod(shippingMethodSource);
-}
-
-function mergeOrderItems(items) {
-    const merged = new Map();
-
-    items.forEach((item) => {
-        if (!item || typeof item !== 'object') {
-            return;
-        }
-
-        const code = item.code || null;
-        const quantity = Number(item.quantity || 0);
-        if (!code || !Number.isFinite(quantity) || quantity <= 0) {
-            return;
-        }
-
-        merged.set(code, (merged.get(code) || 0) + quantity);
-    });
-
-    return Array.from(merged, ([code, quantity]) => ({ code, quantity }));
 }
 
 function buildGroupedShipments(attachments) {
@@ -198,10 +191,7 @@ function buildGroupedShipments(attachments) {
         grouped.set(tracking_number, entry);
     });
 
-    return Array.from(grouped.values()).map((entry) => ({
-        ...entry,
-        order_items: mergeOrderItems(entry.order_items)
-    }));
+    return Array.from(grouped.values());
 }
 
 // Single route to process inbound shipment data and forward to OrderDesk.

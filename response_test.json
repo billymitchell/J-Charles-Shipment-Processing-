@@ -1,0 +1,18 @@
+{
+    "success": true,
+    "responses": [
+        {
+            "tracking_number": "1",
+            "response": {
+                "message": "Shipments queued for processing"
+            }
+        },
+        {
+            "tracking_number": "2",
+            "response": {
+                "message": "Shipments queued for processing"
+            }
+        }
+    ],
+    "request_id": "bb615d8d-7bbc-4fd7-9cad-6b066409a980"
+}

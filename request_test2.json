@@ -1,0 +1,43 @@
+{
+    "id": "7aa9265eb954179e2ba8dec4e32c99df",
+    "received_at": "2026-02-09 23:00:22",
+    "processed_at": "2026-02-09 23:00:23",
+    "mail_attachments": [
+        {
+            "jcharles_order_number": "SO-81788",
+            "jcharles_delivery_number": "WH/OUT/152428",
+            "brightstores_order_id": "48371-100968",
+            "order_items_brightstores_line_item_id": "519157999",
+            "order_items_code": "C-PIN-4STR",
+            "order_items_name": "[Forbes] Magnetic Pin (4 Star)",
+            "shipment_quantity": "50",
+            "ship_date": "2026-02-09 15:21:07",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6862306275"
+        },
+        {
+            "jcharles_order_number": "SO-81788",
+            "jcharles_delivery_number": "WH/OUT/152428",
+            "brightstores_order_id": "48371-100968",
+            "order_items_brightstores_line_item_id": "519158000",
+            "order_items_code": "C-PIN-5STR",
+            "order_items_name": "[Forbes] Magnetic Pin (5 Star)",
+            "shipment_quantity": "30",
+            "ship_date": "2026-02-09 15:21:07",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6862306275"
+        },
+        {
+            "jcharles_order_number": "SO-81788",
+            "jcharles_delivery_number": "WH/OUT/152428",
+            "brightstores_order_id": "48371-100968",
+            "order_items_brightstores_line_item_id": "519158001",
+            "order_items_code": "C-PIN-4STR",
+            "order_items_name": "[Forbes] Magnetic Pin (4 Star)",
+            "shipment_quantity": "20",
+            "ship_date": "2026-02-09 15:21:07",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6862306275"
+        }
+    ]
+}
