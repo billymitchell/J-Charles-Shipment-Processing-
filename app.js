@@ -83,10 +83,20 @@ function parseShippingMethod(methodSource) {
         || shipmentMethodMapping[normalizedCode]
         || rawMethod;
 
-    return {
+    const parsed = {
         carrier_code: carrier_code || null,
         shipment_method: shipment_method || null
     };
+
+    // Vendor "External Shipment" should be normalized to the expected UPS service.
+    if (parsed.carrier_code === 'External' && parsed.shipment_method === 'Shipment') {
+        return {
+            carrier_code: 'UPS',
+            shipment_method: 'Worldwide Expedited'
+        };
+    }
+
+    return parsed;
 }
 
 // Build line items for the OrderDesk payload from either an array or legacy fields.
