@@ -230,7 +230,7 @@ app.post('/', async (req, res, next) => {
                 source_id: shipment.source_id,
                 tracking_number: shipment.tracking_number,
                 carrier_code: shipment.carrier_code,
-                shipment_method: shipment.shipment_method,
+                shipment_method: `${shipment.carrier_code} ${shipment.shipment_method}`,
                 order_items_count: shipment.order_items.length
             });
 
