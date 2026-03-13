@@ -92,7 +92,7 @@ function parseShippingMethod(methodSource) {
     if (parsed.carrier_code === 'External' && parsed.shipment_method === 'Shipment') {
         return {
             carrier_code: 'UPS',
-            shipment_method: 'Worldwide Expedited'
+            shipment_method: 'UPS Worldwide Expedited'
         };
     }
 
