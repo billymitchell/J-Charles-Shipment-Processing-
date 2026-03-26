@@ -93,6 +93,13 @@ function parseShippingMethod(methodSource) {
         shipment_method: shipment_method || null
     };
 
+    if (parsed.carrier_code === 'UPS' && parsed.shipment_method === 'International') {
+        return {
+            carrier_code: 'UPS',
+            shipment_method: 'Worldwide Expedited'
+        };
+    }
+
     // Vendor "External Shipment" should be normalized to the expected UPS service.
     if (parsed.carrier_code === 'External' && parsed.shipment_method === 'Shipment') {
         return {
