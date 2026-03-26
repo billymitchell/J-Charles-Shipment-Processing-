@@ -78,10 +78,15 @@ function parseShippingMethod(methodSource) {
     const parts = trimmed.split(/\s+/);
     const carrier_code = parts.length > 1 ? parts.shift() : null;
     const rawMethod = parts.join(' ');
-    const normalizedCode = rawMethod.toUpperCase();
-    const shipment_method = shipmentMethodMapping[rawMethod]
+    const cleanedMethod = rawMethod
+        .replace(/^\-\s*/, '')
+        .replace(/\s*\-\s*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    const normalizedCode = cleanedMethod.toUpperCase();
+    const shipment_method = shipmentMethodMapping[cleanedMethod]
         || shipmentMethodMapping[normalizedCode]
-        || rawMethod;
+        || cleanedMethod;
 
     const parsed = {
         carrier_code: carrier_code || null,
@@ -167,6 +172,41 @@ function resolveShippingMethod(attachment) {
     return parseShippingMethod(shippingMethodSource);
 }
 
+function expandAttachmentsByTrackingNumber(attachments) {
+    if (!Array.isArray(attachments)) {
+        return [];
+    }
+
+    return attachments.flatMap((attachment) => {
+        if (!attachment || typeof attachment !== 'object') {
+            return [];
+        }
+
+        const rawTrackingNumber = attachment.tracking_number;
+        if (!rawTrackingNumber) {
+            return [attachment];
+        }
+
+        const trackingNumbers = String(rawTrackingNumber)
+            .trim()
+            .split(/\s{2,}|\r?\n|,/)
+            .map((trackingNumber) => trackingNumber.trim())
+            .filter(Boolean);
+
+        if (trackingNumbers.length <= 1) {
+            return [{
+                ...attachment,
+                tracking_number: trackingNumbers[0] || String(rawTrackingNumber).trim()
+            }];
+        }
+
+        return trackingNumbers.map((trackingNumber) => ({
+            ...attachment,
+            tracking_number: trackingNumber
+        }));
+    });
+}
+
 function buildGroupedShipments(attachments) {
     const grouped = new Map();
 
@@ -216,8 +256,9 @@ app.post('/', async (req, res, next) => {
         const attachments = Array.isArray(data.mail_attachments)
             ? data.mail_attachments
             : [data.mail_attachments];
+        const normalizedAttachments = expandAttachmentsByTrackingNumber(attachments);
 
-        const shipments = buildGroupedShipments(attachments);
+        const shipments = buildGroupedShipments(normalizedAttachments);
         if (!shipments.length) {
             throw createError("Invalid attachment: Missing 'tracking_number'.", 400);
         }

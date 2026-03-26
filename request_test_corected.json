@@ -1,0 +1,43 @@
+{
+    "id": "6ccea30763c73dedde3074190b40e9ee",
+    "received_at": "2026-03-25 22:00:15",
+    "processed_at": "2026-03-25 22:00:15",
+    "mail_attachments": [
+        {
+            "jcharles_order_number": "SO-81284",
+            "jcharles_delivery_number": "WH/OUT/151918",
+            "brightstores_order_id": "48551-2062",
+            "order_items_brightstores_line_item_id": "517333091",
+            "order_items_code": "C-RED-INDR-5STR",
+            "order_items_name": "[Forbes] Indoor Award Plaque (5 Star Redemption)",
+            "shipment_quantity": "1",
+            "ship_date": "2026-03-25 11:49:23",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6746912900"
+        },
+        {
+            "jcharles_order_number": "SO-81284",
+            "jcharles_delivery_number": "WH/OUT/151918",
+            "brightstores_order_id": "48551-2062",
+            "order_items_brightstores_line_item_id": "517333091",
+            "order_items_code": "C-RED-INDR-5STR",
+            "order_items_name": "[Forbes] Indoor Award Plaque (5 Star Redemption)",
+            "shipment_quantity": "1",
+            "ship_date": "2026-03-25 11:49:23",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6747323910"
+        },
+        {
+            "jcharles_order_number": "SO-81284",
+            "jcharles_delivery_number": "WH/OUT/151918",
+            "brightstores_order_id": "48551-2062",
+            "order_items_brightstores_line_item_id": "517333091",
+            "order_items_code": "C-RED-INDR-5STR",
+            "order_items_name": "[Forbes] Indoor Award Plaque (5 Star Redemption)",
+            "shipment_quantity": "1",
+            "ship_date": "2026-03-25 11:49:23",
+            "brightstores_shipping_method": "External Shipment",
+            "tracking_number": "1Z08835W6748783127"
+        }
+    ]
+}
